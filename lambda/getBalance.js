@@ -1,4 +1,22 @@
-const { DynamoDB } = require("aws-sdk");
-const crypto = require("crypto");
+const { DynamoDB } = require('aws-sdk');
 
-exports.handler = async function (event, context) {};
+exports.handler = async function(event, context) {
+    try {
+        const docClient = new DynamoDB.DocumentClient();
+        const data = await docClient.scan({
+            TableName: 'Balances',
+        }).promise();
+        return {
+            statusCode: 200,
+            body: JSON.stringify(data),
+            headers: {
+                "Access-Control-Allow-Origin" : "*",
+                "Access-Control-Allow-Credentials" : true
+            }
+        };
+    } catch (err) {
+        console.log('DynamoDB error getting balance: ', err);
+        return { statusCode: 500, body: 'Failed to get balance' };
+    }
+};
+
