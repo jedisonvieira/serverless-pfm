@@ -1,10 +1,31 @@
-AWS CDK Serverless personal finances manager
+# AWS CDK Serverless personal finances manager
 
-# Welcome to your CDK JavaScript project
+This project uses lambda functions to insert financial transactions and allow the user to consult his balance
 
-This is a blank project for CDK development with JavaScript.
+## Usage examples
+## * `Insert a new transaction:`
+### POST: 'https://yourdomain.com/bank/transactions'
+### Body:
+#### Income
+{
+	"user": "junior",
+	"type": "income",
+	"value": 10
+}
+#### Expense
+{
+	"user": "junior",
+	"type": "expense",
+	"value": 5
+}
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app. The build step is not required when using JavaScript.
+## * `Check all balances:`
+### GET: 'https://yourdomain.com/bank/balances'
+
+
+## * `Check balance by user:`
+### GET: 'https://yourdomain.com/bank/balances/{user}'
+
 
 ## Useful commands
 

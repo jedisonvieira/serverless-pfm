@@ -7,7 +7,7 @@ exports.handler = async function (event, context) {
     for (const record of event.Records) {
         const messageBody = JSON.parse(record.body);
         const user = messageBody.user.S;
-        const type = messageBody.type.S.toString();
+        const type = messageBody.type.S.toString().toLowerCase();
         const value = messageBody.value.N;
 
         const balance = await getBalance(user);
@@ -47,7 +47,7 @@ async function calculateBalance(balance, value, type) {
     if (balance == null) balance = { balance: 0 };
     var transactionValue = parseFloat(value);
 
-    if (type == 'income') transactionValue = transactionValue * -1;
+    if (type == 'expense') transactionValue = transactionValue * -1;
 
     const newBalance = parseFloat(balance.balance) + transactionValue;
     return newBalance;
