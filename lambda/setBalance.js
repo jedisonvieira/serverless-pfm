@@ -6,17 +6,17 @@ exports.handler = async function (event, context) {
     console.log('Event: ', JSON.stringify(event, null, 2));
     for (const record of event.Records) {
         const messageBody = JSON.parse(record.body);
-        const user = messageBody.user;
-        const type = messageBody.type;
-        const value = messageBody.value;
+        const user = messageBody.user.S;
+        const type = messageBody.type.S.toString();
+        const value = messageBody.value.N;
 
-        const balance = getBalance(user);
-        const newBalance = calculateBalance(balance, value, type);
+        const balance = await getBalance(user);
+        const newBalance = await calculateBalance(balance, value, type);
 
         if (balance == null) {
-            insertBalance(newBalance, user)
+            await insertBalance(newBalance, user);
         } else {
-            updateBalance(newBalance, user);
+            await updateBalance(newBalance, user);
         }
     }
 };
@@ -45,9 +45,9 @@ async function getBalance(user) {
 
 async function calculateBalance(balance, value, type) {
     if (balance == null) balance = { balance: 0 };
-    const transactionValue = parseFloat(value);
+    var transactionValue = parseFloat(value);
 
-    if (type == 'income') transactionValue *= -1;
+    if (type == 'income') transactionValue = transactionValue * -1;
 
     const newBalance = parseFloat(balance.balance) + transactionValue;
     return newBalance;
@@ -59,7 +59,7 @@ async function updateBalance(balance, user) {
         const params = {
             TableName: 'Balances',
             Key: {
-                'user': user
+                'user': user.toString()
             },
             UpdateExpression: 'SET balance = :balance',
             ExpressionAttributeValues: {
